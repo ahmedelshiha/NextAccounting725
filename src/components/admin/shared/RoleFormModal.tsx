@@ -17,6 +17,9 @@ import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { AlertCircle, Loader2, ChevronDown, ChevronRight, Search, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { globalEventEmitter } from '@/lib/event-emitter'
+import { AuditLoggingService, AuditActionType, AuditSeverity } from '@/services/audit-logging.service'
+import { useSession } from 'next-auth/react'
 
 interface RoleFormData {
   name: string
@@ -253,9 +256,11 @@ export const RoleFormModal = React.forwardRef<HTMLDivElement, RoleFormModalProps
       return true
     }
 
+    const { data: session } = useSession()
+
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
       e.preventDefault()
-      
+
       if (!validateForm()) return
 
       setIsSubmitting(true)
@@ -277,6 +282,62 @@ export const RoleFormModal = React.forwardRef<HTMLDivElement, RoleFormModalProps
         }
 
         const result = await response.json()
+
+        // Log audit event
+        const userId = (session?.user as any)?.id || 'unknown'
+        const tenantId = (session?.user as any)?.tenantId || 'unknown'
+
+        if (mode === 'create') {
+          await AuditLoggingService.logAuditEvent({
+            actionType: AuditActionType.ROLE_CREATED,
+            severity: AuditSeverity.INFO,
+            userId,
+            tenantId,
+            targetResourceId: result.id,
+            targetResourceType: 'ROLE',
+            description: `Created role: ${formData.name}`,
+            changes: {
+              name: formData.name,
+              description: formData.description,
+              permissions: formData.permissions,
+            },
+          })
+        } else {
+          await AuditLoggingService.logAuditEvent({
+            actionType: AuditActionType.ROLE_UPDATED,
+            severity: AuditSeverity.INFO,
+            userId,
+            tenantId,
+            targetResourceId: initialData?.id,
+            targetResourceType: 'ROLE',
+            description: `Updated role: ${formData.name}`,
+            changes: {
+              name: formData.name,
+              description: formData.description,
+              permissions: formData.permissions,
+            },
+          })
+        }
+
+        // Emit event for real-time sync
+        if (mode === 'create') {
+          globalEventEmitter.emit('role:created', {
+            roleId: result.id,
+            name: formData.name,
+            description: formData.description,
+            permissions: formData.permissions,
+            timestamp: Date.now(),
+          })
+        } else {
+          globalEventEmitter.emit('role:updated', {
+            roleId: initialData?.id,
+            name: formData.name,
+            description: formData.description,
+            permissions: formData.permissions,
+            timestamp: Date.now(),
+          })
+        }
+
         toast.success(
           mode === 'create'
             ? 'Role created successfully'
@@ -291,7 +352,7 @@ export const RoleFormModal = React.forwardRef<HTMLDivElement, RoleFormModalProps
       } finally {
         setIsSubmitting(false)
       }
-    }, [formData, mode, initialData?.id, onClose, onSuccess])
+    }, [formData, mode, initialData?.id, onClose, onSuccess, session])
 
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
