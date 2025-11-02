@@ -12,11 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ChevronDown, X } from 'lucide-react'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 
 export interface UserFilters {
   search: string
@@ -87,11 +83,11 @@ export function AdvancedUserFilters({
   const [isOpen, setIsOpen] = useState(!isMobile)
   
   const hasActiveFilters =
-    filters.search ||
-    filters.role ||
-    filters.status ||
-    filters.department ||
-    (filters.dateRange && filters.dateRange !== 'all')
+    !!filters.search ||
+    !!filters.role ||
+    !!filters.status ||
+    !!filters.department ||
+    (filters.dateRange !== undefined && filters.dateRange !== 'all')
   
   const activeFilterCount = [
     filters.search ? 1 : 0,
@@ -105,8 +101,8 @@ export function AdvancedUserFilters({
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
       {/* Mobile: Collapsible header */}
       {isMobile && (
-        <Collapsible open={isOpen} onOpenChange={setIsOpen as any}>
-          <CollapsibleTrigger asChild>
+        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+          <CollapsibleTrigger>
             <button className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-gray-900">🔎 Filters</span>
