@@ -11,6 +11,8 @@ import { useMediaQuery } from '@/hooks/useMediaQuery'
 export function AuditTab() {
   const [showFilters, setShowFilters] = useState(false)
   const [dateRange, setDateRange] = useState<'today' | 'week' | 'month' | 'all'>('month')
+  const isMobile = useMediaQuery('(max-width: 640px)')
+  const isTablet = useMediaQuery('(max-width: 1024px)')
 
   const {
     logs,
