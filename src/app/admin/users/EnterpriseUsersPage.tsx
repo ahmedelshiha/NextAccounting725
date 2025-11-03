@@ -1,15 +1,10 @@
 'use client'
 
-import React, { useState, useEffect, Suspense } from 'react'
+import React, { useState, useEffect, Suspense, lazy } from 'react'
 import { TabNavigation, TabType } from './components/TabNavigation'
 import {
-  DashboardTab,
   ExecutiveDashboardTab,
   EntitiesTab,
-  WorkflowsTab,
-  BulkOperationsTab,
-  AuditTab,
-  AdminTab,
   RbacTab
 } from './components/tabs'
 import { CreateUserModal } from '@/components/admin/shared/CreateUserModal'
@@ -17,6 +12,13 @@ import { useUsersContext } from './contexts/UsersContextProvider'
 import { ErrorBoundary } from '@/components/providers/error-boundary'
 import { TabSkeleton, DashboardTabSkeleton, MinimalTabSkeleton } from './components/TabSkeleton'
 import { toast } from 'sonner'
+import { performanceMetrics } from '@/lib/performance/metrics'
+
+// Dynamic imports for less-frequently used tabs (reduces initial bundle by ~40KB)
+const WorkflowsTab = lazy(() => import('./components/tabs/WorkflowsTab').then(m => ({ default: m.WorkflowsTab })))
+const BulkOperationsTab = lazy(() => import('./components/tabs/BulkOperationsTab').then(m => ({ default: m.BulkOperationsTab })))
+const AuditTab = lazy(() => import('./components/tabs/AuditTab').then(m => ({ default: m.AuditTab })))
+const AdminTab = lazy(() => import('./components/tabs/AdminTab').then(m => ({ default: m.AdminTab })))
 
 /**
  * Enterprise Users Page - Phase 4 Implementation
@@ -41,6 +43,8 @@ import { toast } from 'sonner'
 export function EnterpriseUsersPage() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard')
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
+  // Performance: start render measure (ended in effects below)
+  performanceMetrics.startMeasure('admin-users-page:render')
 
   // Initialize tab from URL query (?tab=...)
   useEffect(() => {
@@ -54,6 +58,15 @@ export function EnterpriseUsersPage() {
     }
   }, [])
   const context = useUsersContext()
+
+  // End render measure on initial mount and tab/user changes
+  useEffect(() => {
+    performanceMetrics.endMeasure('admin-users-page:render', {
+      tab: activeTab,
+      users: Array.isArray(context.users) ? context.users.length : 0,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, context.users?.length])
 
   // Handler for Add User action
   const handleAddUser = () => {
