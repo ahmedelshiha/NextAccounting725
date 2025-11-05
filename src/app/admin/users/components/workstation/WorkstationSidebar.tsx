@@ -36,7 +36,7 @@ export const WorkstationSidebar = memo(function WorkstationSidebar({
         status: undefined,
         department: undefined,
         dateRange: 'all',
-      } as any)
+      })
     }
   }, [onFiltersChange])
 
