@@ -41,7 +41,10 @@ const UserRow = memo(function UserRow({
   isSelected = false,
   onSelect,
   onViewProfile,
-  onEditInline
+  onEditInline,
+  onDeleteUser,
+  onResetPassword,
+  onRoleChange
 }: UserRowProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(user.name || '')
