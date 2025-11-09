@@ -147,7 +147,7 @@ const UserGrowthChart = memo(function UserGrowthChart({
   return (
     <div className="user-growth-chart-container">
       <h3 className="user-growth-chart-title">User Growth</h3>
-      <div className="user-growth-chart-body">
+      <div className="user-growth-chart-body" style={{ height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Line data={chartData} options={options} />
       </div>
     </div>
