@@ -1958,6 +1958,57 @@ model WorkflowSimulation {
   @@map("workflow_simulations")
 }
 
+// Phase 14: Report Builder Models
+model Report {
+  id                String                        @id @default(cuid())
+  tenantId          String
+  userId            String
+  name              String                        @db.VarChar(255)
+  description       String?
+  format            String                        @default("table") // table, grid, pivot, chart
+  sections          Json                          @default("[]") // ReportSection[]
+  pageSize          String                        @default("A4") // A4, Letter, Tabloid
+  orientation       String                        @default("portrait") // portrait, landscape
+  includeHeader     Boolean                       @default(true)
+  includeFooter     Boolean                       @default(true)
+  headerText        String?
+  footerText        String?
+  templateId        String?
+  lastGeneratedAt   DateTime?
+  generationCount   Int                           @default(0)
+  createdAt         DateTime                      @default(now())
+  updatedAt         DateTime                      @updatedAt
+
+  // Relations
+  tenant            Tenant                        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  creator           User                          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  executions        ReportExecution[]
+
+  @@index([tenantId, createdAt])
+  @@index([userId, createdAt])
+  @@map("reports")
+}
+
+model ReportExecution {
+  id                String                        @id @default(cuid())
+  reportId          String
+  status            String                        // pending, generating, completed, failed
+  filePath          String?
+  fileSizeBytes     Int?
+  generationTimeMs  Int?
+  errorMessage      String?
+  executedAt        DateTime                      @default(now())
+  completedAt       DateTime?
+  createdAt         DateTime                      @default(now())
+
+  // Relations
+  report            Report                        @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId, status])
+  @@index([executedAt])
+  @@map("report_executions")
+}
+
 // Phase 13: Export Scheduler Models
 model ExportSchedule {
   id                String                        @id @default(cuid())
