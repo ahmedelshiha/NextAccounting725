@@ -56,6 +56,7 @@ export const PERMISSIONS = {
   INTEGRATION_HUB_EDIT: 'integration.settings.edit',
   INTEGRATION_HUB_TEST: 'integration.settings.test',
   INTEGRATION_HUB_SECRETS_WRITE: 'integration.settings.secrets.write',
+  INTEGRATIONS_MANAGE: 'integrations.manage',
 
   // Client Management settings
   CLIENT_SETTINGS_VIEW: 'client.settings.view',
@@ -598,6 +599,16 @@ export const PERMISSION_METADATA: Record<Permission, PermissionMetadata> = {
     dependencies: [PERMISSIONS.INTEGRATION_HUB_EDIT],
     icon: 'Lock',
     tags: ['integration', 'secrets', 'security'],
+  },
+  [PERMISSIONS.INTEGRATIONS_MANAGE]: {
+    key: PERMISSIONS.INTEGRATIONS_MANAGE,
+    label: 'Manage Integrations',
+    description: 'Full management of filter bar integrations (Slack, Teams, Zapier, Webhooks)',
+    category: PermissionCategory.SYSTEM,
+    risk: RiskLevel.HIGH,
+    dependencies: [PERMISSIONS.INTEGRATION_HUB_VIEW],
+    icon: 'Plug',
+    tags: ['integration', 'manage', 'slack', 'teams', 'zapier', 'webhook'],
   },
 
   // Client Settings
