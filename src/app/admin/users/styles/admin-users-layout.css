@@ -77,7 +77,7 @@
 }
 
 /* When sidebar content is collapsed (internal state), adjust width */
-.admin-workbench-sidebar[data-collapsed="true"] {
+.admin-workbench-sidebar:has([data-collapsed="true"]) {
   width: 64px;
   flex-shrink: 1;
   overflow: hidden;
