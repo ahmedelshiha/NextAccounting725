@@ -170,6 +170,9 @@ export async function processCsvImport(
   validRows: number;
   invalidRows: number;
 }> {
+  // Import CSV job utilities
+  const { initializeImportJob } = await import('./csv-import-job');
+
   // Validate CSV
   const validation = await validateCsvData(csvContent);
 
@@ -177,10 +180,19 @@ export async function processCsvImport(
     throw new Error(`CSV validation failed. ${formatValidationErrors(validation.errors)}`);
   }
 
-  // In production, this would create a job and return a job ID
-  // For now, we'll return metadata
+  // Generate job ID
+  const jobId = `csv-import-${tenantId}-${Date.now()}`;
+
+  // Create import job (queues it for processing)
+  const state = await initializeImportJob(
+    tenantId,
+    userId,
+    validation.data,
+    jobId
+  );
+
   return {
-    jobId: `import-${Date.now()}`,
+    jobId: state.jobId,
     totalRows: validation.totalRows,
     validRows: validation.successCount,
     invalidRows: validation.errorCount,
