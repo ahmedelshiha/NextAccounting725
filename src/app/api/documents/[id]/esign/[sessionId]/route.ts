@@ -136,7 +136,7 @@ export async function DELETE(
       details: {
         documentId: id,
         sessionId,
-        cancelledBy: session.user.id,
+        cancelledBy: ctx.userId,
       },
     }).catch(() => {})
 
