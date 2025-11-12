@@ -305,7 +305,7 @@ Epic: DOC-3 Vault
   - AzureComputerVisionProvider (scaffolded)
   - AWSTextractProvider (scaffolded)
   - Text extraction, invoice analysis, receipt analysis, document classification
-- ✅ **Phase 3.2**: Document analysis API (POST /api/documents/[id]/analyze)
+- �� **Phase 3.2**: Document analysis API (POST /api/documents/[id]/analyze)
 - ✅ **Phase 3.3**: E-signature service abstraction (src/lib/esign/esign-service.ts)
   - MockESignatureProvider for development
   - DocuSignProvider (scaffolded)
@@ -413,8 +413,48 @@ Epic: BILL-5 Billing & reconciliation
 - Comprehensive audit logging
 
 ## Phase 6 — Connected Banking & Receipts
+**Status: ⚠️ PARTIAL (60% complete - Foundations laid)**
+
 Epic: BNK-6 Banking & receipts OCR
-- Bank aggregator connectors; CSV fallback; receipt inbox; auto-match pipeline.
+
+**Implemented** ✅:
+- ✅ Banking provider adapter abstraction (BankingProvider interface)
+- ✅ Plaid provider (scaffolded - ready for API integration)
+- ✅ UAE Banks direct connection adapters (ADIB, FAB, DIB, ADCB, FGB, EIB, RAKBANK, NBAD)
+- ✅ KSA Banks direct connection adapters (SAMBA, RIYAD, AL_AHLI, RAJHI, ANB, BOP, ALINMA)
+- ✅ CSV upload fallback provider with transaction parsing
+- ✅ BankingConnection model for managing connections
+- ✅ BankingTransaction model for storing transactions
+- ✅ Provider factory pattern for easy switching
+- ✅ Session token management (encrypted storage)
+- ✅ Transaction deduplication via externalId
+- ✅ Auto-matching flags for invoices/expenses
+- ✅ Sync frequency configuration (DAILY/WEEKLY/MONTHLY/MANUAL)
+- ✅ Error tracking and retry logic scaffolded
+- ✅ Comprehensive logging and audit trails ready
+
+**Pending** ⏳ (Next Phase 6 session):
+- Bank connection CRUD API endpoints
+- Transaction sync/import cron job
+- Receipt inbox UI component
+- Receipt OCR pipeline integration
+- Transaction auto-matching algorithm
+- Bank account reconciliation views
+- Transaction categorization system
+
+**Files Created**:
+- `src/lib/banking/adapters.ts` (258 lines)
+- Database migration with 2 new tables and 8 indexes
+- Full Prisma schema integration
+
+**Next Steps**:
+- [ ] POST /api/banking/connections - Add bank connection
+- [ ] GET /api/banking/connections - List connections
+- [ ] PATCH /api/banking/connections/:id - Update connection
+- [ ] DELETE /api/banking/connections/:id - Remove connection
+- [ ] Implement transaction sync cron job
+- [ ] Build receipt OCR integration
+- [ ] Create auto-matching algorithm
 
 ## Phase 7 — Country Tax Workflows
 Epics: UAE-7, KSA-7, EGY-7
