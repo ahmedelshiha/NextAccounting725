@@ -269,7 +269,7 @@ export async function getMatchingStats(connectionId: string, tenantId: string) {
     where: { tenantId },
     _count: true,
     _sum: {
-      totalAmount: true,
+      totalCents: true,
     },
   })
 
@@ -285,7 +285,7 @@ export async function getMatchingStats(connectionId: string, tenantId: string) {
     invoices: {
       total: invoices.reduce((sum, group) => sum + group._count, 0),
       totalAmount: invoices
-        .reduce((sum, group) => sum + parseFloat(group._sum?.totalAmount || '0'), 0)
+        .reduce((sum, group) => sum + (group._sum?.totalCents || 0) / 100, 0)
         .toFixed(2),
     },
   }
