@@ -53,10 +53,14 @@ interface UserFormProps {
 }
 
 export const UserForm = React.forwardRef<HTMLFormElement, UserFormProps>(
-  function UserForm(props, ref) {
-    const { mode, onSubmit, onCancel, isLoading = false, showPasswordGeneration = true } = props as any
-    const initialData = 'initialData' in props ? props.initialData : undefined
-
+  function UserForm({
+    mode,
+    initialData,
+    onSubmit,
+    onCancel,
+    isLoading = false,
+    showPasswordGeneration = true,
+  }, ref) {
     const [tempPassword, setTempPassword] = useState<string | null>(
       mode === 'edit' && initialData?.temporaryPassword ? initialData.temporaryPassword : null
     )
