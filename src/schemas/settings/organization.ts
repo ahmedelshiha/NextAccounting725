@@ -21,9 +21,9 @@ export const OrgContactSchema = z.object({
 })
 
 export const OrgLocalizationSchema = z.object({
-  defaultTimezone: z.string().optional().default('UTC'),
-  defaultCurrency: z.string().optional().default('USD'),
-  defaultLocale: z.string().optional().default('en')
+  defaultTimezone: z.string().default('UTC'),
+  defaultCurrency: z.string().default('USD'),
+  defaultLocale: z.string().default('en')
 })
 
 export const OrgBrandingSchema = z.object({
