@@ -11,6 +11,14 @@ import { logger } from "@/lib/logger";
 const _api_GET = async (request: NextRequest) => {
   try {
     const ctx = requireTenantContext();
+
+    if (!ctx.tenantId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const entityId = searchParams.get("entityId");
 
@@ -25,7 +33,7 @@ const _api_GET = async (request: NextRequest) => {
     const entity = await prisma.entity.findFirst({
       where: {
         id: entityId,
-        tenantId: ctx.tenantId!,
+        tenantId: ctx.tenantId,
       },
       include: {
         licenses: true,

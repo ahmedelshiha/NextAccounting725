@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { withTenantContext } from "@/lib/api-wrapper";
 import { requireTenantContext } from "@/lib/tenant-utils";
 import prisma from "@/lib/prisma";
@@ -13,8 +14,9 @@ const _api_GET = async (request: NextRequest) => {
   try {
     const ctx = requireTenantContext();
     const userId = ctx.userId;
+    const tenantId = ctx.tenantId;
 
-    if (!userId) {
+    if (!userId || !tenantId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -33,7 +35,7 @@ const _api_GET = async (request: NextRequest) => {
       where: {
         obligation: {
           entity: {
-            tenantId: ctx.tenantId!,
+            tenantId: tenantId,
           },
           ...(country && { country }),
           ...(obligationType && { type: obligationType }),
